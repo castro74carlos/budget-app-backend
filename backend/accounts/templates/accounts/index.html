@@ -1,0 +1,24 @@
+<p> Hello World! </p>
+{% for a in debt_accounts%}
+<p> Account {{a.name}} -- ${{a.current_balance}} </p>
+{% endfor %}
+
+<h1>Total Debt: ${{total_debt}}</h1>
+
+{% for a in cash_accounts%}
+<p> Account {{a.name}} -- ${{a.current_balance}} </p>
+{% endfor %}
+
+<h1>Total Cash: ${{total_cash}}</h1>
+
+{% for a in asset_accounts%}
+<p> Account {{a.name}} -- ${{a.current_balance}} </p>
+{% endfor %}
+
+<h1>Total Asset: ${{total_asset}}</h1>
+
+{% for a in savings_accounts%}
+<p> Account {{a.name}} -- ${{a.current_balance}} </p>
+{% endfor %}
+
+<h1>Total Savings: ${{total_savings}}</h1>

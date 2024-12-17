@@ -1,0 +1,51 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django specific files
+db.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables file
+.env
+
+# Django migrations
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# Media files (if applicable)
+media/
+
+# Static files (can be rebuilt)
+staticfiles/
+static/
+
+# Virtual environments
+venv/
+env/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# Test outputs
+.coverage
+*.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Node modules (for projects with a frontend)
+node_modules/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
