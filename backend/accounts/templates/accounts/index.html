@@ -1,24 +1,41 @@
-<p> Hello World! </p>
+<h1> Accounts and Transactions </h1>
+<p>-----------------------------------------------------------------------------</p>
+
 {% for a in debt_accounts%}
-<p> Account {{a.name}} -- ${{a.current_balance}} </p>
+<h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
+    {% for t in a.transaction_set.all %}
+    <p> {{t.date}} | {{ t.vendor }} | {{ t.amount }} | {{ t.category}} </p>
+    {% endfor %}
 {% endfor %}
 
 <h1>Total Debt: ${{total_debt}}</h1>
+<p>-----------------------------------------------------------------------------</p>
 
 {% for a in cash_accounts%}
-<p> Account {{a.name}} -- ${{a.current_balance}} </p>
+<h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
+    {% for t in a.transaction_set.all %}
+    <p> {{t.date}} | {{ t.vendor }} | {{ t.amount }} | {{ t.category}} </p>
+    {% endfor %}
 {% endfor %}
 
 <h1>Total Cash: ${{total_cash}}</h1>
+<p>-----------------------------------------------------------------------------</p>
 
 {% for a in asset_accounts%}
-<p> Account {{a.name}} -- ${{a.current_balance}} </p>
+<h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
+    {% for t in a.transaction_set.all %}
+    <p> {{t.date}} | {{ t.vendor }} | {{ t.amount }} | {{ t.category}} </p>
+    {% endfor %}
 {% endfor %}
 
 <h1>Total Asset: ${{total_asset}}</h1>
+<p>-----------------------------------------------------------------------------</p>
 
 {% for a in savings_accounts%}
-<p> Account {{a.name}} -- ${{a.current_balance}} </p>
+<h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
+    {% for t in a.transaction_set.all %}
+    <p> {{t.date}} | {{ t.vendor }} | {{ t.amount }} | {{ t.category}} </p>
+    {% endfor %}
 {% endfor %}
 
 <h1>Total Savings: ${{total_savings}}</h1>

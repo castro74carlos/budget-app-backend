@@ -10,6 +10,15 @@ class Category(models.Model):
         return self.name
 
 
+class Vendor(models.Model):
+    name = models.CharField(max_length=50)
+    created = models.DateTimeField(default=timezone.now)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Account(models.Model):
     class AccountHolder(models.TextChoices):
         HANNAH = 'HK', 'Hannah'
@@ -52,6 +61,7 @@ class Transaction(models.Model):
         DECREASE = 'DEC', "Decrease"
 
     id = models.BigAutoField(primary_key=True)
+    vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.CharField(max_length=50)
     date = models.DateField(null=True, blank=True)
     amount = models.DecimalField(
@@ -66,5 +76,6 @@ class Transaction(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     paid_off = models.BooleanField(default=False)
+    recurring = models.BooleanField(default=False)
     created = models.DateTimeField(default=timezone.now)
     last_updated = models.DateTimeField(auto_now=True)
