@@ -1,10 +1,12 @@
+
+{% load custom_filters %}
 <h1> Accounts and Transactions </h1>
 <p>-----------------------------------------------------------------------------</p>
 
 {% for a in debt_accounts%}
 <h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
     {% for t in a.transaction_set.all %}
-    <p> {{t.date}} | {{ t.vendor }} | {{ t.amount }} | {{ t.category}} </p>
+    <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
     {% endfor %}
 {% endfor %}
 
@@ -14,7 +16,7 @@
 {% for a in cash_accounts%}
 <h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
     {% for t in a.transaction_set.all %}
-    <p> {{t.date}} | {{ t.vendor }} | {{ t.amount }} | {{ t.category}} </p>
+    <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
     {% endfor %}
 {% endfor %}
 
@@ -24,7 +26,7 @@
 {% for a in asset_accounts%}
 <h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
     {% for t in a.transaction_set.all %}
-    <p> {{t.date}} | {{ t.vendor }} | {{ t.amount }} | {{ t.category}} </p>
+    <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
     {% endfor %}
 {% endfor %}
 
@@ -34,7 +36,7 @@
 {% for a in savings_accounts%}
 <h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
     {% for t in a.transaction_set.all %}
-    <p> {{t.date}} | {{ t.vendor }} | {{ t.amount }} | {{ t.category}} </p>
+    <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
     {% endfor %}
 {% endfor %}
 

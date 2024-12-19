@@ -84,3 +84,7 @@ class Transaction(models.Model):
     recurring = models.BooleanField(default=False)
     created = models.DateTimeField(default=timezone.now)
     last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return (self.vendor.name + " " + str(self.amount))
+    
