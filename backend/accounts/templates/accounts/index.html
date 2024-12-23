@@ -1,43 +1,46 @@
+{% if user.is_authenticated %}
+    {% load custom_filters %}
+    <h1> Accounts and Transactions for {{ user.get_username }} </h1>
+    <p>-----------------------------------------------------------------------------</p>
 
-{% load custom_filters %}
-<h1> Accounts and Transactions </h1>
-<p>-----------------------------------------------------------------------------</p>
-
-{% for a in debt_accounts%}
-<h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
-    {% for t in a.transaction_set.all %}
-    <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
+    {% for a in debt_accounts%}
+    <h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
+        {% for t in a.transaction_set.all %}
+        <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
+        {% endfor %}
     {% endfor %}
-{% endfor %}
 
-<h1>Total Debt: ${{total_debt}}</h1>
-<p>-----------------------------------------------------------------------------</p>
+    <h1>Total Debt: ${{total_debt}}</h1>
+    <p>-----------------------------------------------------------------------------</p>
 
-{% for a in cash_accounts%}
-<h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
-    {% for t in a.transaction_set.all %}
-    <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
+    {% for a in cash_accounts%}
+    <h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
+        {% for t in a.transaction_set.all %}
+        <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
+        {% endfor %}
     {% endfor %}
-{% endfor %}
 
-<h1>Total Cash: ${{total_cash}}</h1>
-<p>-----------------------------------------------------------------------------</p>
+    <h1>Total Cash: ${{total_cash}}</h1>
+    <p>-----------------------------------------------------------------------------</p>
 
-{% for a in asset_accounts%}
-<h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
-    {% for t in a.transaction_set.all %}
-    <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
+    {% for a in asset_accounts%}
+    <h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
+        {% for t in a.transaction_set.all %}
+        <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
+        {% endfor %}
     {% endfor %}
-{% endfor %}
 
-<h1>Total Asset: ${{total_asset}}</h1>
-<p>-----------------------------------------------------------------------------</p>
+    <h1>Total Asset: ${{total_asset}}</h1>
+    <p>-----------------------------------------------------------------------------</p>
 
-{% for a in savings_accounts%}
-<h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
-    {% for t in a.transaction_set.all %}
-    <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
+    {% for a in savings_accounts%}
+    <h1> Account {{a.name}} -- ${{a.current_balance}} </h1>
+        {% for t in a.transaction_set.all %}
+        <p> {{t.date}} | {{ t.vendor }} | {{ t|display_amount }} | {{ t.category}} </p>
+        {% endfor %}
     {% endfor %}
-{% endfor %}
 
-<h1>Total Savings: ${{total_savings}}</h1>
+    <h1>Total Savings: ${{total_savings}}</h1>
+{% else %}
+    <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
+{% endif %}

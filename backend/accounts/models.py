@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
@@ -25,11 +26,6 @@ class Vendor(models.Model):
 
 
 class Account(models.Model):
-    class AccountHolder(models.TextChoices):
-        HANNAH = 'HK', 'Hannah'
-        CARLOS = 'CC', 'Carlos'
-        JOINT = 'J', 'Joint Account'
-
     class AccountType(models.TextChoices):
         ASSET = 'A', 'Asset'
         CASH = 'C', 'Cash'
@@ -37,10 +33,7 @@ class Account(models.Model):
         SAVINGS = 'S', 'Savings'
     
     name = models.CharField(max_length=50)
-    account_holder = models.CharField(
-        max_length=2,
-        choices=AccountHolder
-    )
+    account_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     current_balance = models.DecimalField(
         max_digits=10,
         decimal_places=2

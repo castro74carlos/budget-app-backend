@@ -1,6 +1,8 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .models import Account
 
+@login_required
 def index(request):
     accounts = Account.objects.all()
     context = {"mortgage": accounts.filter(mortgage=True)}
