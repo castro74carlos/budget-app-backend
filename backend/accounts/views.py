@@ -1,7 +1,12 @@
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import Group
 from django.shortcuts import render
 from guardian.shortcuts import get_objects_for_user
-from .models import Account
+from rest_framework import permissions, viewsets
+
+from .models import Account, User
+from .serializers import GroupSerializer, UserSerializer
+
 
 @login_required
 @permission_required('accounts.view_account')
@@ -26,3 +31,21 @@ def index(request):
 
 def sum_account_type_balances(accounts):
     return sum(account.current_balance for account in accounts)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all().order_by('name')
+    serializer_class = GroupSerializer
+    permission_classes = [permissions.IsAuthenticated]
