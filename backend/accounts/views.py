@@ -1,10 +1,18 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render
+from guardian.shortcuts import get_objects_for_user
 from .models import Account
 
 @login_required
+@permission_required('accounts.view_account')
 def index(request):
-    accounts = Account.objects.all()
+    accounts = get_objects_for_user(
+        user=request.user, 
+        perms='view_account', 
+        klass=Account, 
+        accept_global_perms=False
+    )
+    print(accounts)
     context = {"mortgage": accounts.filter(mortgage=True)}
     
     for type in Account.AccountType:

@@ -1,6 +1,6 @@
-{% if user.is_authenticated %}
+{% if request.user.is_authenticated %}
     {% load custom_filters %}
-    <h1> Accounts and Transactions for {{ user.get_username }} </h1>
+    <h1> Accounts and Transactions for {{ request.user.get_username }} </h1>
     <p>-----------------------------------------------------------------------------</p>
 
     {% for a in debt_accounts%}

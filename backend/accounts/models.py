@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+from guardian.shortcuts import assign_perm
 
 class User(AbstractUser):
     pass
@@ -51,8 +52,18 @@ class Account(models.Model):
 
     def __str__(self):
         return self.name
-    
 
+    # TODO move perm assignment to serializer once DRF is implemented
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None  # Check if the object is new
+        super().save(*args, **kwargs)  # Save the object first
+
+        if is_new:  # Only assign permissions when the object is new
+            assign_perm('change_account', self.account_owner, self)
+            assign_perm('delete_account', self.account_owner, self)
+            assign_perm('view_account', self.account_owner, self)
+
+    
 class Transaction(models.Model):
     class TransactionType(models.TextChoices):
         INCREASE = 'INC', "Increase"

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'guardian',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,8 @@ AUTH_USER_MODEL = 'accounts.User'
 
 LOGIN_URL = '/user-accounts/login/'
 LOGIN_REDIRECT_URL = '/accounts'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+    'guardian.backends.ObjectPermissionBackend',  # For object-level permissions
+)
