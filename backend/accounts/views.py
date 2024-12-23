@@ -12,7 +12,7 @@ def index(request):
         klass=Account, 
         accept_global_perms=False
     )
-    print(accounts)
+    
     context = {"mortgage": accounts.filter(mortgage=True)}
     
     for type in Account.AccountType:
