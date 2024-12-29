@@ -4,8 +4,8 @@ from django.shortcuts import render
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import permissions, viewsets
 
-from .models import Account, User
-from .serializers import GroupSerializer, UserSerializer
+from .models import Account, Category, User, Vendor
+from .serializers import CategorySerializer, GroupSerializer, UserSerializer, VendorSerializer
 
 
 @login_required
@@ -39,7 +39,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -48,4 +48,20 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all().order_by('name')
     serializer_class = GroupSerializer
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows categories to be viewed or edited.
+    """
+    queryset = Category.objects.all().order_by('name')
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class VendorViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows vendors to be viewed or edited.
+    """
+    queryset = Vendor.objects.all().order_by('name')
+    serializer_class = VendorSerializer
     permission_classes = [permissions.IsAuthenticated]
