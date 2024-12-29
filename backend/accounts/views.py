@@ -25,11 +25,11 @@ def index(request):
         account_type_key=account_name + "_accounts"
         total_type_key="total_" + account_name
         context[account_type_key] = [account for account in accounts if account.account_type==type and not account.mortgage]
-        context[total_type_key] = sum_account_type_balances(context[account_type_key])
+        context[total_type_key] = sum_account_balances_by_type(context[account_type_key])
 
     return render(request, "accounts/index.html", context)
 
-def sum_account_type_balances(accounts):
+def sum_account_balances_by_type(accounts):
     return sum(account.current_balance for account in accounts)
 
 
