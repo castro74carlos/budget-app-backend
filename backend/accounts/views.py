@@ -1,11 +1,14 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import Group
+from django.db import models
 from django.shortcuts import render
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import permissions, viewsets
 
-from .models import Account, Category, User, Vendor
-from .serializers import CategorySerializer, GroupSerializer, UserSerializer, VendorSerializer
+from .models import Account, Category, User, Vendor, Transaction
+from .permissions import IsOwnerOrAdmin
+from .serializers import CategorySerializer, GroupSerializer, UserSerializer, VendorSerializer, AccountSerializer, \
+    TransactionSerializer
 
 
 @login_required
@@ -65,3 +68,41 @@ class VendorViewSet(viewsets.ModelViewSet):
     queryset = Vendor.objects.all().order_by('name')
     serializer_class = VendorSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+class AccountViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows accounts to be viewed or edited.
+    """
+    queryset = Account.objects.all().order_by('id')
+    serializer_class = AccountSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+
+    def get_queryset(self):
+        """
+        Broadly filter accounts based on user association.
+        """
+        user = self.request.user
+        if user.is_staff or user.is_superuser:
+            return self.queryset
+
+        # Return accounts where the user is the owner
+        return self.queryset.filter(models.Q(account_owner=user)).distinct()
+
+class TransactionViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows transactions to be viewed or edited.
+    """
+    queryset = Transaction.objects.all().order_by('date')
+    serializer_class = TransactionSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+
+    def get_queryset(self):
+        """
+        Broadly filter accounts based on user association.
+        """
+        user = self.request.user
+        if user.is_staff or user.is_superuser:
+            return self.queryset
+
+        # Return accounts where the user is the owner
+        return self.queryset.filter(models.Q(account__account_owner=user)).distinct()

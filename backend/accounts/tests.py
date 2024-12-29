@@ -242,3 +242,5 @@ class VendorTests(APITestCase):
         self.client.post(self.url, new_vendor_data, format='json')
         unauthorized_response = self.client.get(self.url)
         self.assertEqual(unauthorized_response.status_code, status.HTTP_403_FORBIDDEN)
+
+# TODO tests for accounts and transactions

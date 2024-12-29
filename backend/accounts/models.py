@@ -2,7 +2,8 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
-from guardian.shortcuts import assign_perm
+from rest_framework.exceptions import PermissionDenied
+
 
 class User(AbstractUser):
     pass
@@ -45,23 +46,25 @@ class Account(models.Model):
     )
     latest_transaction_id = models.BigIntegerField(null=True, blank=True)
     mortgage = models.BooleanField(default=False)
-    # interest_rate 
-    # promo_period
+    # interest_rate TODO Implement
+    # promo_period TODO Implement
     created = models.DateTimeField(default=timezone.now)
     last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
 
-    # TODO move perm assignment to serializer once DRF is implemented
-    def save(self, *args, **kwargs):
-        is_new = self.pk is None  # Check if the object is new
-        super().save(*args, **kwargs)  # Save the object first
+    def perform_create(self, serializer):
+        # Get the account from the validated data
+        requested_account_owner = serializer.validated_data['account_owner']
+        user = self.request.user
 
-        if is_new:  # Only assign permissions when the object is new
-            assign_perm('change_account', self.account_owner, self)
-            assign_perm('delete_account', self.account_owner, self)
-            assign_perm('view_account', self.account_owner, self)
+        # Perform permission checks
+        if not requested_account_owner == user or user.is_staff or user.is_superuser:
+            raise PermissionDenied("You do not have permission to create transactions in this account.")
+
+        # Save the object if permissions pass
+        serializer.save()
 
     
 class Transaction(models.Model):
@@ -91,4 +94,15 @@ class Transaction(models.Model):
 
     def __str__(self):
         return (self.vendor.name + " " + str(self.amount))
-    
+
+    def perform_create(self, serializer):
+        # Get the account from the validated data
+        account = serializer.validated_data['account']
+        user = self.request.user
+
+        # Perform permission checks
+        if not account.account_owner == user:
+            raise PermissionDenied("You do not have permission to create transactions in this account.")
+
+        # Save the object if permissions pass
+        serializer.save()
