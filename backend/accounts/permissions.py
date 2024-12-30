@@ -14,7 +14,7 @@ class IsOwnerOrAdmin(permissions.BasePermission):
             account_url = request.data.get('account')
             account_owner = request.data.get('account_owner')
             if account_owner:
-                return account_owner == request.user
+                return int(account_owner) == int(request.user.id)
             elif not account_url:
                 return True
             else:

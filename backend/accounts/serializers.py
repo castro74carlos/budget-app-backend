@@ -26,6 +26,8 @@ class VendorSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'url', 'name', 'created', 'last_updated']
 
 class AccountSerializer(serializers.HyperlinkedModelSerializer):
+    account_owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
     class Meta:
         model = Account
         fields = [
