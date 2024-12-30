@@ -61,7 +61,7 @@ class Account(models.Model):
 
         # Perform permission checks
         if not requested_account_owner == user or user.is_staff or user.is_superuser:
-            raise PermissionDenied("You do not have permission to create transactions in this account.")
+            raise PermissionDenied("You do not have permission to create accounts for this user.")
 
         # Save the object if permissions pass
         serializer.save()

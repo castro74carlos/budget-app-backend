@@ -98,7 +98,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Broadly filter accounts based on user association.
+        Broadly filter transactions based on user association.
         """
         user = self.request.user
         if user.is_staff or user.is_superuser:
