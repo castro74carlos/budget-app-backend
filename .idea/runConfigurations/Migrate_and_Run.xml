@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Migrate and Run" type="CompoundRunConfigurationType">
+    <toRun name="Make Migration" type="PythonConfigurationType" />
+    <toRun name="Run Migration" type="PythonConfigurationType" />
+    <toRun name="Run Server" type="PythonConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>
