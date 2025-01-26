@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from .models import User, Category, Vendor, Account
+from .models import User, Category, Vendor, Account, Transaction
 from django.urls import reverse
 
 class UserTests(APITestCase):
@@ -358,4 +358,141 @@ class AccountTests(APITestCase):
         unauthorized_response = self.client.get(self.url)
         self.assertEqual(status.HTTP_403_FORBIDDEN, unauthorized_response.status_code)
 
-# TODO tests for transactions
+class TransactionTests(APITestCase):
+
+    def setUp(self):
+        """Set up initial data for the tests."""
+        self.user_data = {
+            'username': 'testuser',
+            'email': 'testuser@example.com',
+            'password': 'password123',
+            'is_staff': False,
+        }
+        self.user = User.objects.create_user(**self.user_data)
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+        self.category_data = {
+            'name': 'test-category',
+        }
+        self.category1 = self.client.post(reverse('category-list'), self.category_data, format='json').data
+        self.vendor_data = {
+            'name': 'test-vendor',
+        }
+        self.vendor1 = self.client.post(reverse('vendor-list'), self.vendor_data, format='json').data
+
+        self.userJson = self.client.get(reverse('user-detail', args=[self.user.id])).data
+        self.account_data = {
+            'name': 'test-account',
+            'account_owner': self.user.id,
+            'current_balance': 30.00,
+            'account_type': 'C',
+        }
+        self.account = self.client.post(reverse('account-list'), self.account_data, format='json').data
+        self.user2_data = self.user_data
+        self.user2_data['username'] = 'test-user-alt'
+        self.user2_data['is_staff'] = False
+        self.user2 = User.objects.create_user(**self.user2_data)
+        account2_data = self.account_data
+        account2_data['account_owner'] = self.user2
+        self.account2 = Account.objects.create(**account2_data)
+        self.transaction_data = {
+            'date': '2024-02-14',
+            'vendor': self.vendor1['url'],
+            'description': 'vendor item',
+            'amount': 30.0,
+            'type': 'INC',
+            'category': self.category1['url'],
+            'account': self.account['url']
+        }
+        self.url = reverse('transaction-list')  # The URL for the transaction list view
+        self.transaction = self.client.post(self.url, self.transaction_data, format='json').data
+
+
+    def test_create_transaction(self):
+        """Test creating a new transaction."""
+        expected = Transaction.objects.count() + 1
+        test_data = self.transaction_data
+        test_data['description'] = 'test-transaction2'
+        response = self.client.post(self.url, test_data, format='json')
+
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(expected, Transaction.objects.count())
+        self.assertEqual('test-transaction2', Transaction.objects.get(id=response.data['id']).description)
+
+    def test_create_transaction_for_unauthorized_account(self):
+        """Test creating a new transaction for a different user."""
+        test_data = self.transaction_data
+        test_data['description'] = 'test-transaction2'
+        test_data['account'] = 'somehost.com/' + str(self.account2.id) + '/'
+        response = self.client.post(self.url, test_data, format='json')
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
+    def test_get_transaction(self):
+        """Test retrieving a transaction."""
+        expected = Transaction.objects.filter(account=self.account['id']).count()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(expected, response.data['count'])
+
+    def test_get_transaction_detail(self):
+        """Test retrieving transaction details by ID."""
+        url = reverse('transaction-detail', args=[self.transaction['id']])  # URL for transaction detail view
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual('vendor item', response.data['description'])
+
+    def test_create_transaction_invalid_data(self):
+        """Test creating a transaction with invalid data."""
+        invalid_data = {'name': ''}
+        response = self.client.post(self.url, invalid_data, format='json')
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+    def test_update_transaction(self):
+        """Test updating a transaction."""
+        url = reverse('transaction-detail', args=[self.transaction['id']])
+        updated_data = {
+            'date': '2024-02-14',
+            'vendor': self.vendor1['url'],
+            'description': 'vendor item updated',
+            'amount': 30.0,
+            'type': 'INC',
+            'category': self.category1['url'],
+            'account': self.account['url']
+        }
+        response = self.client.put(url, updated_data, format='json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual('vendor item updated', response.data['description'])
+
+    def test_update_transaction_owner_to_other_user_account(self):
+        """Test updating a transaction."""
+        url = reverse('transaction-detail', args=[self.transaction['id']])
+        updated_data = {
+            'date': '2024-02-14',
+            'vendor': self.vendor1['url'],
+            'description': 'vendor item updated',
+            'amount': 30.0,
+            'type': 'INC',
+            'category': self.category1['url'],
+            'account': 'somehost.com/' + str(self.account2.id) + '/'
+        }
+        response = self.client.put(url, updated_data, format='json')
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
+    def test_delete_transaction(self):
+        """Test deleting a transaction."""
+        url = reverse('transaction-detail', args=[self.transaction['id']])
+        expected = Transaction.objects.count() - 1
+        response = self.client.delete(url)
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+        self.assertEqual(expected, Transaction.objects.count())
+
+    def test_get_transaction_unauthorized(self):
+        """Test unauthorized access."""
+        # Create a new transaction but don't authenticate
+        new_transaction_data = {
+            'name': 'new-transaction'
+        }
+        self.client.force_authenticate(user=None)
+        self.client.post(self.url, new_transaction_data, format='json')
+        unauthorized_response = self.client.get(self.url)
+        self.assertEqual(status.HTTP_403_FORBIDDEN, unauthorized_response.status_code)
