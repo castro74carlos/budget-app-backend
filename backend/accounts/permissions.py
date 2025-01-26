@@ -35,7 +35,6 @@ class IsOwnerOrAdmin(permissions.BasePermission):
             return True
         # Check ownership of the parent object (e.g., Project)
         if hasattr(obj, 'account') and obj.account.account_owner == request.user:
-            print(obj.account.account_owner)
             return True
         # Check ownership directly on the object
         if hasattr(obj, 'account_owner') and obj.account_owner == request.user:

@@ -42,6 +42,7 @@ class AccountSerializer(serializers.HyperlinkedModelSerializer):
             'created',
             'last_updated'
         ]
+
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Transaction
