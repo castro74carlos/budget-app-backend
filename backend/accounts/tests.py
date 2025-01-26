@@ -294,7 +294,7 @@ class AccountTests(APITestCase):
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def test_get_account(self):
-        """Test retrieving a account."""
+        """Test retrieving an account."""
         expected = Account.objects.filter(account_owner=self.user).count()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -308,13 +308,13 @@ class AccountTests(APITestCase):
         self.assertEqual('test-account', response.data['name'])
 
     def test_create_account_invalid_data(self):
-        """Test creating a account with invalid data."""
+        """Test creating an account with invalid data."""
         invalid_data = {'name': ''}
         response = self.client.post(self.url, invalid_data, format='json')
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
 
     def test_update_account(self):
-        """Test updating a account."""
+        """Test updating an account."""
         url = reverse('account-detail', args=[self.account.id])
         updated_data = {
             'name': 'updated-account',
@@ -328,7 +328,7 @@ class AccountTests(APITestCase):
         self.assertEqual('updated-account', self.account.name)
 
     def test_update_account_owner_to_other_user(self):
-        """Test updating a account."""
+        """Test updating an account."""
         url = reverse('account-detail', args=[self.account.id])
         updated_data = {
             'name': 'updated-account',
@@ -340,7 +340,7 @@ class AccountTests(APITestCase):
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def test_delete_account(self):
-        """Test deleting a account."""
+        """Test deleting an account."""
         url = reverse('account-detail', args=[self.account.id])
         expected = Account.objects.count() - 1
         response = self.client.delete(url)

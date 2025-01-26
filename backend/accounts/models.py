@@ -93,7 +93,7 @@ class Transaction(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return (self.vendor.name + " " + str(self.amount))
+        return self.vendor.name + " " + str(self.amount)
 
     def perform_create(self, serializer):
         # Get the account from the validated data
